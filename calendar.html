@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ปฏิทินหลักทรัพย์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--panel:#fff;--ink:#14202b;--mute:#5d6b78;--line:#d5dce3;--acc:#2f3fa8;--onacc:#fff;--we:#e6eaee;
+--xd:#2aa52a;--xdbg:#d4f4d4;--xdfg:#14641e;--xm:#2f5fd0;--xmbg:#d3e3fb;--xmfg:#1f4ea8;--xr:#7bb32a;--xrbg:#e2f2b8;--xrfg:#4d6b10;--xx:#8a6d1f;--xxbg:#f6e8c2;--xxfg:#6b520f}
+@media(prefers-color-scheme:dark){:root{--bg:#10161c;--panel:#18212a;--ink:#e6ecf1;--mute:#93a1ae;--line:#2a3541;--acc:#8e9bff;--onacc:#10161c;--we:#141b22;
+--xd:#4cc56a;--xdbg:rgba(76,197,106,.18);--xdfg:#8ee6a6;--xm:#7fa2ff;--xmbg:rgba(127,162,255,.2);--xmfg:#a9c1ff;--xr:#b5d94c;--xrbg:rgba(181,217,76,.2);--xrfg:#d6ec95;--xx:#e0b95a;--xxbg:rgba(224,185,90,.2);--xxfg:#f0d795}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans Thai",system-ui,sans-serif}
+button{font:inherit;color:inherit;background:none;border:1px solid var(--line);border-radius:4px;padding:.3rem .8rem;cursor:pointer}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:500}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.wrap{max-width:1200px;margin:0 auto;padding:1rem 1.2rem}
+header{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap}
+header h1{font-size:1.2rem;margin:0}
+header a{color:var(--acc);text-decoration:none;font-size:.9rem}
+#stat{margin-left:auto;color:var(--mute);font-size:.85rem}
+.nav{display:flex;align-items:center;gap:.6rem;margin:.9rem 0 .4rem;flex-wrap:wrap}
+.nav h2{font-size:1.05rem;margin:0 .4rem;min-width:9rem;text-align:center}
+#tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-left:auto}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;color:var(--mute);font-size:.82rem;margin-bottom:.7rem}
+.legend b{color:var(--ink)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:2px solid var(--acc);background:var(--bg)}
+.wd{padding:.4rem .5rem;text-align:right;font-weight:500;color:var(--mute);border-bottom:1px solid var(--line)}
+.cell{min-height:6.5rem;padding:.3rem;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.we{background:var(--we)}
+.dh{text-align:right;font-size:.85rem;font-weight:500}
+.dn{display:none;margin-right:.4rem;color:var(--mute);font-weight:400}
+.today .num{display:inline-grid;place-items:center;min-width:1.5rem;height:1.5rem;border-radius:50%;background:var(--ink);color:var(--bg)}
+.grp{background:var(--panel);border-left:3px solid var(--bar);border-radius:3px;padding:.2rem .35rem;margin-top:.3rem;box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.grp b{font-size:.8rem}
+.chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:.15rem}
+.chips span{background:var(--chip);color:var(--chipfg);font-size:.72rem;font-weight:500;padding:0 .35rem;border-radius:3px}
+.g-XD{--bar:var(--xd);--chip:var(--xdbg);--chipfg:var(--xdfg)}
+.g-XM{--bar:var(--xm);--chip:var(--xmbg);--chipfg:var(--xmfg)}
+.g-XR{--bar:var(--xr);--chip:var(--xrbg);--chipfg:var(--xrfg)}
+.g-X{--bar:var(--xx);--chip:var(--xxbg);--chipfg:var(--xxfg)}
+.msg{padding:2rem 0;color:var(--mute)}
+@media(max-width:700px){
+.wrap{padding:.8rem}
+.cal{display:block}
+.wd,.blank,.noev{display:none}
+.cell{min-height:0;border:0;border-bottom:1px solid var(--line);padding:.6rem .2rem}
+.dh{text-align:left}
+.dn{display:inline}
+.nav h2{min-width:0;flex:1}
+#tabs{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html">← บันทึกหุ้นของทีม</a>
+    <h1>ปฏิทินหลักทรัพย์</h1>
+    <span id="stat"></span>
+  </header>
+  <div class="nav">
+    <button id="prev" aria-label="เดือนก่อน">‹</button>
+    <h2 id="mtitle"></h2>
+    <button id="next" aria-label="เดือนถัดไป">›</button>
+    <div id="tabs"></div>
+  </div>
+  <div class="legend">
+    <span><b>XD</b> ปันผล</span><span><b>XM</b> ประชุมผู้ถือหุ้น</span><span><b>XR</b> สิทธิจองซื้อหุ้นเพิ่มทุน</span>
+  </div>
+  <div id="cal" class="cal"></div>
+</div>
+<script src="config.js"></script>
+<script>
+// แหล่งข้อมูล: events.json ใน repo Xalert (แก้ได้ที่ config.js ด้วย EVENTS_URL)
+const DATA_URL = (window.APP_CONFIG && window.APP_CONFIG.EVENTS_URL) || 'https://raw.githubusercontent.com/avalon8228/Xalert/main/events.json';
+const MN = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const WD = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const ORDER = ['XD','XM','XR'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const t = new Date(), todayKey = t.getFullYear() + '-' + pad(t.getMonth()+1) + '-' + pad(t.getDate());
+let by = {}, months = [], cur = todayKey.slice(0, 7);
+
+fetch(DATA_URL).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(list => {
+  for (const e of list){ const day = by[e.date] || (by[e.date] = {}); (day[e.mark] || (day[e.mark] = [])).push(e.symbol); }
+  months = [...new Set(list.map(e => e.date.slice(0, 7)))].sort();
+  if (months.length && !months.includes(cur)) cur = months[months.length - 1];
+  draw();
+}).catch(e => { $('#cal').innerHTML = `<p class="msg">โหลดข้อมูลไม่สำเร็จ: ${esc(e.message)}<br>${esc(DATA_URL)}</p>`; });
+
+function go(step){ let [y, m] = cur.split('-').map(Number); m += step; if (m < 1){ m = 12; y--; } if (m > 12){ m = 1; y++; } cur = y + '-' + pad(m); draw(); }
+$('#prev').onclick = () => go(-1);
+$('#next').onclick = () => go(1);
+$('#tabs').onclick = e => { const b = e.target.closest('button'); if (b){ cur = b.dataset.m; draw(); } };
+
+function draw(){
+  const [y, m] = cur.split('-').map(Number);
+  const first = new Date(y, m - 1, 1).getDay(), n = new Date(y, m, 0).getDate();
+  $('#mtitle').textContent = MN[m-1] + ' ' + (y + 543);
+  $('#tabs').innerHTML = months.length > 1 ? months.map(k => { const [yy, mm] = k.split('-').map(Number);
+    return `<button data-m="${k}" class="${k === cur ? 'on' : ''}">${MN[mm-1]} ${yy + 543}</button>`; }).join('') : '';
+  let h = WD.map((w, i) => `<div class="wd">${w}</div>`).join('') + '<div class="cell blank"></div>'.repeat(first);
+  const cnt = {};
+  for (let d = 1; d <= n; d++){
+    const key = `${cur}-${pad(d)}`, dow = (first + d - 1) % 7, day = by[key] || {};
+    const marks = [...ORDER.filter(k => day[k]), ...Object.keys(day).filter(k => !ORDER.includes(k))];
+    h += `<div class="cell${dow % 6 === 0 ? ' we' : ''}${key === todayKey ? ' today' : ''}${marks.length ? '' : ' noev'}"><div class="dh"><span class="dn">${WD[dow]}</span><span class="num">${d}</span></div>` +
+      marks.map(k => { cnt[k] = (cnt[k] || 0) + day[k].length;
+        return `<div class="grp g-${ORDER.includes(k) ? k : 'X'}"><b>${esc(k)}</b><div class="chips">${day[k].map(s => `<span>${esc(s)}</span>`).join('')}</div></div>`; }).join('') + '</div>';
+  }
+  $('#cal').innerHTML = h;
+  const parts = Object.keys(cnt).map(k => k + ' ' + cnt[k]);
+  $('#stat').textContent = parts.length ? 'เดือนนี้ ' + parts.join(', ') + ' รายการ' : 'ไม่มีข้อมูลในเดือนนี้';
+}
+</script>
+</body>
+</html>
