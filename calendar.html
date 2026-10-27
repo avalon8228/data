@@ -6,52 +6,44 @@
 <title>ปฏิทินหลักทรัพย์</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
 <style>
-:root{--bg:#eef1f4;--panel:#fff;--ink:#14202b;--mute:#5d6b78;--line:#d5dce3;--acc:#2f3fa8;--onacc:#fff;--we:#e6eaee;
---xd:#2aa52a;--xdbg:#d4f4d4;--xdfg:#14641e;--xm:#2f5fd0;--xmbg:#d3e3fb;--xmfg:#1f4ea8;--xr:#7bb32a;--xrbg:#e2f2b8;--xrfg:#4d6b10;--xx:#8a6d1f;--xxbg:#f6e8c2;--xxfg:#6b520f}
-@media(prefers-color-scheme:dark){:root{--bg:#10161c;--panel:#18212a;--ink:#e6ecf1;--mute:#93a1ae;--line:#2a3541;--acc:#8e9bff;--onacc:#10161c;--we:#141b22;
---xd:#4cc56a;--xdbg:rgba(76,197,106,.18);--xdfg:#8ee6a6;--xm:#7fa2ff;--xmbg:rgba(127,162,255,.2);--xmfg:#a9c1ff;--xr:#b5d94c;--xrbg:rgba(181,217,76,.2);--xrfg:#d6ec95;--xx:#e0b95a;--xxbg:rgba(224,185,90,.2);--xxfg:#f0d795}}
+:root{--bg:#eef1f4;--panel:#fff;--ink:#14202b;--mute:#5d6b78;--line:#d5dce3;--acc:#2f3fa8;--onacc:#fff;--bad:#b3261e}
+@media(prefers-color-scheme:dark){:root{--bg:#10161c;--panel:#18212a;--ink:#e6ecf1;--mute:#93a1ae;--line:#2a3541;--acc:#8e9bff;--onacc:#10161c;--bad:#ff8a80}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans Thai",system-ui,sans-serif}
-button{font:inherit;color:inherit;background:none;border:1px solid var(--line);border-radius:4px;padding:.3rem .8rem;cursor:pointer}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "IBM Plex Sans Thai",system-ui,sans-serif}
+button,input{font:inherit;color:inherit}
+button{background:none;border:1px solid var(--line);border-radius:4px;padding:.35rem .8rem;cursor:pointer}
 button:hover{border-color:var(--acc)}
-button.on{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:500}
+button.pri{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:500}
+button.danger{color:var(--bad)}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.wrap{max-width:1200px;margin:0 auto;padding:1rem 1.2rem}
-header{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap}
+input{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:.45rem .6rem;width:100%}
+.wrap{max-width:1100px;margin:0 auto;padding:1rem 1.2rem}
+header{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
 header h1{font-size:1.2rem;margin:0}
 header a{color:var(--acc);text-decoration:none;font-size:.9rem}
-#stat{margin-left:auto;color:var(--mute);font-size:.85rem}
-.nav{display:flex;align-items:center;gap:.6rem;margin:.9rem 0 .4rem;flex-wrap:wrap}
-.nav h2{font-size:1.05rem;margin:0 .4rem;min-width:9rem;text-align:center}
-#tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-left:auto}
-.legend{display:flex;gap:1rem;flex-wrap:wrap;color:var(--mute);font-size:.82rem;margin-bottom:.7rem}
-.legend b{color:var(--ink)}
-.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:2px solid var(--acc);background:var(--bg)}
-.wd{padding:.4rem .5rem;text-align:right;font-weight:500;color:var(--mute);border-bottom:1px solid var(--line)}
-.cell{min-height:6.5rem;padding:.3rem;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-.we{background:var(--we)}
-.dh{text-align:right;font-size:.85rem;font-weight:500}
-.dn{display:none;margin-right:.4rem;color:var(--mute);font-weight:400}
-.today .num{display:inline-grid;place-items:center;min-width:1.5rem;height:1.5rem;border-radius:50%;background:var(--ink);color:var(--bg)}
-.grp{background:var(--panel);border-left:3px solid var(--bar);border-radius:3px;padding:.2rem .35rem;margin-top:.3rem;box-shadow:0 1px 2px rgba(0,0,0,.14)}
-.grp b{font-size:.8rem}
-.chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:.15rem}
-.chips span{background:var(--chip);color:var(--chipfg);font-size:.72rem;font-weight:500;padding:0 .35rem;border-radius:3px}
-.g-XD{--bar:var(--xd);--chip:var(--xdbg);--chipfg:var(--xdfg)}
-.g-XM{--bar:var(--xm);--chip:var(--xmbg);--chipfg:var(--xmfg)}
-.g-XR{--bar:var(--xr);--chip:var(--xrbg);--chipfg:var(--xrfg)}
-.g-X{--bar:var(--xx);--chip:var(--xxbg);--chipfg:var(--xxfg)}
+header .pri{margin-left:auto}
+.hint{color:var(--mute);font-size:.85rem;margin:-.4rem 0 1rem}
+figure{margin:0}
+figure img{max-width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+figcaption{margin:.6rem 0;display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;color:var(--mute);font-size:.9rem}
+figcaption b{color:var(--ink)}
+.thumbs{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.th{width:120px;padding:.25rem;text-align:left;display:grid;gap:.25rem}
+.th img{width:100%;height:72px;object-fit:cover;object-position:top;border-radius:3px}
+.th span{font-size:.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.th.on{border-color:var(--acc);outline:1px solid var(--acc)}
 .msg{padding:2rem 0;color:var(--mute)}
-@media(max-width:700px){
-.wrap{padding:.8rem}
-.cal{display:block}
-.wd,.blank,.noev{display:none}
-.cell{min-height:0;border:0;border-bottom:1px solid var(--line);padding:.6rem .2rem}
-.dh{text-align:left}
-.dn{display:inline}
-.nav h2{min-width:0;flex:1}
-#tabs{margin-left:0;width:100%}}
+dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;width:min(480px,94vw);padding:1.2rem}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog form{display:grid;gap:.7rem}
+dialog h1{font-size:1.1rem;margin:0}
+dialog label{display:grid;gap:.2rem;font-size:.85rem;color:var(--mute)}
+#u-p{max-width:100%;max-height:200px;object-fit:contain;border:1px solid var(--line);border-radius:4px;justify-self:start}
+.err{color:var(--bad);margin:0}
+.btns{display:flex;gap:.5rem;justify-content:flex-end}
 </style>
 </head>
 <body>
@@ -59,63 +51,120 @@ header a{color:var(--acc);text-decoration:none;font-size:.9rem}
   <header>
     <a href="index.html">← บันทึกหุ้นของทีม</a>
     <h1>ปฏิทินหลักทรัพย์</h1>
-    <span id="stat"></span>
+    <button id="up" class="pri">อัปโหลดรูป</button>
   </header>
-  <div class="nav">
-    <button id="prev" aria-label="เดือนก่อน">‹</button>
-    <h2 id="mtitle"></h2>
-    <button id="next" aria-label="เดือนถัดไป">›</button>
-    <div id="tabs"></div>
-  </div>
-  <div class="legend">
-    <span><b>XD</b> ปันผล</span><span><b>XM</b> ประชุมผู้ถือหุ้น</span><span><b>XR</b> สิทธิจองซื้อหุ้นเพิ่มทุน</span>
-  </div>
-  <div id="cal" class="cal"></div>
+  <p class="hint">กด "อัปโหลดรูป" หรือวางภาพที่คัดลอกไว้ (Ctrl+V) บนหน้านี้ได้เลย</p>
+  <div id="view"></div>
+  <div id="thumbs" class="thumbs" hidden></div>
 </div>
-<script src="config.js"></script>
+
+<dialog id="dlg">
+  <form id="uf">
+    <h1>อัปโหลดรูปปฏิทิน</h1>
+    <label>เลือกรูป (PNG, JPG, WEBP ไม่เกิน 10 MB)<input id="u-f" type="file" accept="image/png,image/jpeg,image/webp"></label>
+    <img id="u-p" alt="" hidden>
+    <label>ชื่อรูป เช่น ตุลาคม 2569 (ถ้ามี)<input id="u-l"></label>
+    <label>ชื่อของคุณ<input id="u-n" required></label>
+    <p id="uerr" class="err" role="alert" hidden></p>
+    <div class="btns">
+      <button type="button" id="ucancel">ยกเลิก</button>
+      <button class="pri" id="usave">อัปโหลด</button>
+    </div>
+  </form>
+</dialog>
+
 <script>
-// แหล่งข้อมูล: events.json ใน repo Xalert (แก้ได้ที่ config.js ด้วย EVENTS_URL)
-const DATA_URL = (window.APP_CONFIG && window.APP_CONFIG.EVENTS_URL) || 'https://raw.githubusercontent.com/avalon8228/Xalert/main/events.json';
-const MN = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-const WD = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
-const ORDER = ['XD','XM','XR'];
+const {SUPABASE_URL, SUPABASE_KEY} = window.APP_CONFIG || {};
+if (!SUPABASE_URL || !SUPABASE_KEY){
+  document.body.innerHTML = '<p style="padding:2rem">ไม่พบ config.js หรือยังไม่ได้ใส่ค่า Supabase ให้อัปโหลด config.js ไว้โฟลเดอร์เดียวกับหน้านี้</p>';
+  throw new Error('missing config.js');
+}
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const BUCKET = 'calendar', EXT = {'image/png':'png','image/jpeg':'jpg','image/webp':'webp'};
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pad = n => String(n).padStart(2, '0');
-const t = new Date(), todayKey = t.getFullYear() + '-' + pad(t.getMonth()+1) + '-' + pad(t.getDate());
-let by = {}, months = [], cur = todayKey.slice(0, 7);
+let imgs = [], sel = null, author = '';
+try { author = localStorage.getItem('stock-notes-name') || ''; } catch(e) {}
 
-fetch(DATA_URL).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(list => {
-  for (const e of list){ const day = by[e.date] || (by[e.date] = {}); (day[e.mark] || (day[e.mark] = [])).push(e.symbol); }
-  months = [...new Set(list.map(e => e.date.slice(0, 7)))].sort();
-  if (months.length && !months.includes(cur)) cur = months[months.length - 1];
+const src = p => sb.storage.from(BUCKET).getPublicUrl(p).data.publicUrl;
+const when = t => new Date(t).toLocaleString('th-TH', {dateStyle:'medium', timeStyle:'short'});
+
+async function load(){
+  const {data, error} = await sb.from('calendar_images').select('*').order('created_at', {ascending:false});
+  if (error){ $('#view').innerHTML = `<p class="msg">โหลดรูปไม่สำเร็จ: ${esc(error.message)} (รัน calendar-images.sql แล้วหรือยัง)</p>`; return; }
+  imgs = data;
+  if (!imgs.find(i => i.id === sel)) sel = imgs[0]?.id || null;
   draw();
-}).catch(e => { $('#cal').innerHTML = `<p class="msg">โหลดข้อมูลไม่สำเร็จ: ${esc(e.message)}<br>${esc(DATA_URL)}</p>`; });
-
-function go(step){ let [y, m] = cur.split('-').map(Number); m += step; if (m < 1){ m = 12; y--; } if (m > 12){ m = 1; y++; } cur = y + '-' + pad(m); draw(); }
-$('#prev').onclick = () => go(-1);
-$('#next').onclick = () => go(1);
-$('#tabs').onclick = e => { const b = e.target.closest('button'); if (b){ cur = b.dataset.m; draw(); } };
+}
 
 function draw(){
-  const [y, m] = cur.split('-').map(Number);
-  const first = new Date(y, m - 1, 1).getDay(), n = new Date(y, m, 0).getDate();
-  $('#mtitle').textContent = MN[m-1] + ' ' + (y + 543);
-  $('#tabs').innerHTML = months.length > 1 ? months.map(k => { const [yy, mm] = k.split('-').map(Number);
-    return `<button data-m="${k}" class="${k === cur ? 'on' : ''}">${MN[mm-1]} ${yy + 543}</button>`; }).join('') : '';
-  let h = WD.map((w, i) => `<div class="wd">${w}</div>`).join('') + '<div class="cell blank"></div>'.repeat(first);
-  const cnt = {};
-  for (let d = 1; d <= n; d++){
-    const key = `${cur}-${pad(d)}`, dow = (first + d - 1) % 7, day = by[key] || {};
-    const marks = [...ORDER.filter(k => day[k]), ...Object.keys(day).filter(k => !ORDER.includes(k))];
-    h += `<div class="cell${dow % 6 === 0 ? ' we' : ''}${key === todayKey ? ' today' : ''}${marks.length ? '' : ' noev'}"><div class="dh"><span class="dn">${WD[dow]}</span><span class="num">${d}</span></div>` +
-      marks.map(k => { cnt[k] = (cnt[k] || 0) + day[k].length;
-        return `<div class="grp g-${ORDER.includes(k) ? k : 'X'}"><b>${esc(k)}</b><div class="chips">${day[k].map(s => `<span>${esc(s)}</span>`).join('')}</div></div>`; }).join('') + '</div>';
-  }
-  $('#cal').innerHTML = h;
-  const parts = Object.keys(cnt).map(k => k + ' ' + cnt[k]);
-  $('#stat').textContent = parts.length ? 'เดือนนี้ ' + parts.join(', ') + ' รายการ' : 'ไม่มีข้อมูลในเดือนนี้';
+  const c = imgs.find(i => i.id === sel);
+  $('#view').innerHTML = c
+    ? `<figure><a href="${esc(src(c.path))}" target="_blank" rel="noopener" title="เปิดรูปเต็ม"><img src="${esc(src(c.path))}" alt="${esc(c.label || 'ปฏิทินหลักทรัพย์')}"></a>
+       <figcaption><b>${esc(c.label || 'ไม่มีชื่อ')}</b><span>อัปโหลดโดย ${esc(c.uploaded_by || 'ไม่ระบุชื่อ')} เมื่อ ${when(c.created_at)}</span><button class="danger" data-del="${c.id}">ลบรูปนี้</button></figcaption></figure>`
+    : '<p class="msg">ยังไม่มีรูป กด "อัปโหลดรูป" หรือวางภาพด้วย Ctrl+V</p>';
+  $('#thumbs').hidden = imgs.length < 2;
+  $('#thumbs').innerHTML = imgs.map(i => `<button class="th${i.id === sel ? ' on' : ''}" data-id="${i.id}"><img loading="lazy" src="${esc(src(i.path))}" alt=""><span>${esc(i.label || when(i.created_at))}</span></button>`).join('');
 }
+
+$('#thumbs').onclick = e => { const b = e.target.closest('button'); if (b){ sel = b.dataset.id; draw(); } };
+$('#view').onclick = async e => {
+  const b = e.target.closest('button[data-del]'); if (!b) return;
+  if (!b.dataset.armed){ b.dataset.armed = '1'; b.textContent = 'กดอีกครั้งเพื่อลบ'; setTimeout(() => { delete b.dataset.armed; b.textContent = 'ลบรูปนี้'; }, 3000); return; }
+  const c = imgs.find(i => i.id === b.dataset.del); if (!c) return;
+  const {error} = await sb.from('calendar_images').delete().eq('id', c.id);
+  if (error) return alert('ลบไม่สำเร็จ: ' + error.message);
+  await sb.storage.from(BUCKET).remove([c.path]);
+  load();
+};
+
+// ---------- อัปโหลด ----------
+function uerr(m){ const p = $('#uerr'); p.textContent = m; p.hidden = false; }
+function preview(f){
+  const p = $('#u-p');
+  try { p.src = URL.createObjectURL(f); p.hidden = false; } catch(e) { p.hidden = true; }
+}
+function openUp(file){
+  $('#uf').reset(); $('#uerr').hidden = true; $('#u-p').hidden = true;
+  $('#u-n').value = author;
+  if (file){ try { const dt = new DataTransfer(); dt.items.add(file); $('#u-f').files = dt.files; } catch(e) {} preview(file); }
+  $('#dlg').showModal();
+}
+$('#up').onclick = () => openUp();
+$('#ucancel').onclick = () => $('#dlg').close();
+$('#u-f').onchange = () => { const f = $('#u-f').files[0]; if (f) preview(f); };
+document.addEventListener('paste', e => {
+  const f = [...(e.clipboardData?.files || [])].find(x => x.type.startsWith('image/'));
+  if (f){ e.preventDefault(); openUp(f); }
+});
+
+$('#uf').onsubmit = async e => {
+  e.preventDefault();
+  const f = $('#u-f').files[0];
+  if (!f) return uerr('เลือกรูปก่อน');
+  const ext = EXT[f.type];
+  if (!ext) return uerr('รองรับเฉพาะไฟล์ PNG, JPG, WEBP');
+  if (f.size > 10 * 1024 * 1024) return uerr('ไฟล์ใหญ่เกิน 10 MB');
+  author = $('#u-n').value.trim();
+  if (!author) return uerr('ใส่ชื่อของคุณก่อน');
+  try { localStorage.setItem('stock-notes-name', author); } catch(e) {}
+  const btn = $('#usave'); btn.disabled = true; btn.textContent = 'กำลังอัปโหลด...';
+  try {
+    const path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+    const up = await sb.storage.from(BUCKET).upload(path, f, {contentType:f.type, cacheControl:'3600'});
+    if (up.error) return uerr('อัปโหลดไม่สำเร็จ: ' + up.error.message);
+    const ins = await sb.from('calendar_images').insert({path, label:$('#u-l').value.trim() || null, uploaded_by:author}).select().single();
+    if (ins.error){ await sb.storage.from(BUCKET).remove([path]); return uerr('บันทึกรายการไม่สำเร็จ: ' + ins.error.message); }
+    sel = ins.data.id; $('#dlg').close(); load();
+  } catch(err) {
+    uerr('อัปโหลดไม่สำเร็จ: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'อัปโหลด';
+  }
+};
+
+load();
+sb.channel('cal').on('postgres_changes', {event:'*', schema:'public', table:'calendar_images'}, load).subscribe();
 </script>
 </body>
 </html>
