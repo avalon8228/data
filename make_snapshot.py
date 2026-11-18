@@ -49,7 +49,7 @@ def build(rows):
            ":root{color-scheme:light dark}body{font:16px/1.6 system-ui,'Noto Sans Thai',sans-serif;max-width:760px;margin:0 auto;padding:1rem}",
            "h2{margin:1.8rem 0 .3rem;border-bottom:2px solid #f5a623}h3{margin:1rem 0 .1rem;font-size:1rem}ul{margin:.1rem 0;padding-left:1.2rem}small{opacity:.7}",
            "</style></head><body>",
-           '<p><a href="calendar.html">← ปฏิทิน (หน้าแก้ไข)</a> · <a href="calendar.html#import"><b>➕ เพิ่มข้อมูลปฏิทิน (วางข้อความที่แปลงแล้ว)</b></a></p><h1>รายการปฏิทินหลักทรัพย์</h1>',
+           '<p><a href="index.html">← บันทึกหุ้นของทีม</a> · <a href="calendar.html#import"><b>➕ เพิ่มข้อมูลปฏิทิน</b></a> · <a href="calendar.html">✏️ แก้ไข/ลบรายการ</a></p><h1>รายการปฏิทินหลักทรัพย์</h1>',
            f"<p>อัปเดตข้อมูลล่าสุด: {TS} (เวลาไทย) · รวม {len(rows)} รายการ · "
            "หน้านี้เป็นข้อความธรรมดา สร้างจากข้อมูลบนหน้าปฏิทินของทีมโดยอัตโนมัติ (ตรวจทุกชั่วโมง)</p>"]
     cur = None
