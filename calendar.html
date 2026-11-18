@@ -17,6 +17,7 @@
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans Thai",system-ui,sans-serif}
 button,input,textarea{font:inherit;color:inherit}
 button{background:none;border:1px solid var(--line);border-radius:4px;padding:.3rem .8rem;cursor:pointer}
+#tolist{border:1px solid var(--line);border-radius:4px;padding:.3rem .8rem;color:inherit;text-decoration:none}
 button:hover{border-color:var(--acc)}
 button.on{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:500}
 button.pri{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:500}
@@ -33,17 +34,14 @@ header a{color:var(--acc);text-decoration:none;font-size:.9rem}
 #tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-left:auto}
 .legend{display:flex;gap:1rem;flex-wrap:wrap;color:var(--mute);font-size:.82rem;margin-bottom:.7rem}
 .legend b{color:var(--ink)}
-.cal{border-top:2px solid var(--acc)}
-.day{display:flex;gap:1rem;padding:.7rem .3rem;border-bottom:1px solid var(--line)}
-.day.past{opacity:.6}
-.day.today{background:var(--panel);border-left:3px solid var(--acc);padding-left:.6rem}
-.dh{flex:0 0 7.5rem}
-.num{font-size:1.05rem;font-weight:700}
-.wk{display:block;font-size:.82rem;color:var(--mute)}
-.tag{margin-left:.4rem;font-size:.72rem;background:var(--ink);color:var(--bg);border-radius:3px;padding:0 .35rem}
-.rows{flex:1;min-width:0}
-.grp{background:var(--panel);border-left:3px solid var(--bar);border-radius:3px;padding:.2rem .5rem;margin-bottom:.35rem;box-shadow:0 1px 2px rgba(0,0,0,.14)}
-.grp small{font-weight:400;color:var(--mute);margin-left:.4rem}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:2px solid var(--acc);background:var(--bg)}
+.wd{padding:.4rem .5rem;text-align:right;font-weight:500;color:var(--mute);border-bottom:1px solid var(--line)}
+.cell{min-height:6.5rem;padding:.3rem;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.we{background:var(--we)}
+.dh{text-align:right;font-size:.85rem;font-weight:500}
+.dn{display:none;margin-right:.4rem;color:var(--mute);font-weight:400}
+.today .num{display:inline-grid;place-items:center;min-width:1.5rem;height:1.5rem;border-radius:50%;background:var(--ink);color:var(--bg)}
+.grp{background:var(--panel);border-left:3px solid var(--bar);border-radius:3px;padding:.2rem .35rem;margin-top:.3rem;box-shadow:0 1px 2px rgba(0,0,0,.14)}
 .grp b{font-size:.8rem}
 .chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:.15rem}
 .c{background:var(--chip);color:var(--chipfg);font-size:.72rem;font-weight:500;padding:0 .35rem;border-radius:3px;cursor:pointer}
@@ -51,8 +49,7 @@ header a{color:var(--acc);text-decoration:none;font-size:.9rem}
 .g-XD{--bar:var(--xd);--chip:var(--xdbg);--chipfg:var(--xdfg)}
 .g-XM{--bar:var(--xm);--chip:var(--xmbg);--chipfg:var(--xmfg)}
 .g-XR{--bar:var(--xr);--chip:var(--xrbg);--chipfg:var(--xrfg)}
-.g-MEET{--bar:var(--mt);--chip:var(--mtbg);--chipfg:var(--mtfg)}
-.g-X{--bar:var(--mute);--chip:var(--we);--chipfg:var(--ink)}
+.g-MEET,.g-X{--bar:var(--mt);--chip:var(--mtbg);--chipfg:var(--mtfg)}
 .msg{padding:2rem 0;color:var(--mute)}
 dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;width:min(640px,94vw);max-height:92vh;overflow:auto;padding:1.2rem}
 dialog::backdrop{background:rgba(0,0,0,.45)}
@@ -70,9 +67,11 @@ dialog summary{cursor:pointer;color:var(--acc)}
 .btns{display:flex;gap:.5rem;justify-content:flex-end}
 @media(max-width:700px){
 .wrap{padding:.8rem}
-.day{flex-direction:column;gap:.3rem}
-.dh{flex:none}
-.wk{display:inline;margin-left:.4rem}
+.cal{display:block}
+.wd,.blank,.noev{display:none}
+.cell{min-height:0;border:0;border-bottom:1px solid var(--line);padding:.6rem .2rem}
+.dh{text-align:left}
+.dn{display:inline}
 .nav h2{min-width:0;flex:1}
 #tabs{margin-left:0;width:100%}}
 </style>
@@ -83,6 +82,7 @@ dialog summary{cursor:pointer;color:var(--acc)}
     <a href="index.html">← บันทึกหุ้นของทีม</a>
     <h1>ปฏิทินหลักทรัพย์</h1>
     <button id="imp" class="pri">นำเข้าข้อมูล</button>
+    <a id="tolist" href="calendar-list.html">ดูแบบรายการ</a>
     <span id="stat"></span>
   </header>
   <div class="nav">
@@ -92,7 +92,7 @@ dialog summary{cursor:pointer;color:var(--acc)}
     <div id="tabs"></div>
   </div>
   <div class="legend">
-    <span><b>XD</b> ปันผล</span><span><b>XM</b> ประชุมผู้ถือหุ้น</span><span><b>XR</b> สิทธิจองซื้อหุ้นออกใหม่</span><span><b>ส้ม</b> วันจัดประชุมผู้ถือหุ้น</span><span>เครื่องหมายอื่น (XW, XT, XE, XN, XB) มีคำอธิบายข้างรายการ</span>
+    <span><b>XD</b> ปันผล</span><span><b>XM</b> ประชุมผู้ถือหุ้น</span><span><b>XR</b> สิทธิจองซื้อหุ้นเพิ่มทุน</span><span><b>ส้ม</b> วันจัดประชุมผู้ถือหุ้น</span>
     <span>คลิกชื่อหุ้น 2 ครั้งเพื่อลบ</span>
   </div>
   <div id="cal" class="cal"></div>
@@ -128,7 +128,6 @@ const MN = ['มกราคม','กุมภาพันธ์','มีนา�
 const MS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 const WD = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 const ORDER = ['XD','XM','XR','MEET'], LABEL = {MEET:'การจัดประชุมผู้ถือหุ้น'}, ALIAS = {'ประชุม':'MEET','MEETING':'MEET'};
-const MEAN = {XD:'ไม่ได้สิทธิรับเงินปันผล',XR:'ไม่ได้สิทธิจองซื้อหุ้นออกใหม่',XW:'ไม่ได้สิทธิรับใบสำคัญแสดงสิทธิ (Warrant)',XT:'ไม่ได้สิทธิรับใบสำคัญแสดงสิทธิจองซื้อหุ้นเพิ่มทุนที่โอนสิทธิได้',XM:'ไม่มีสิทธิเข้าประชุมผู้ถือหุ้น',XE:'ไม่ได้สิทธิแปลงสภาพตราสารสิทธิเป็นหุ้นอ้างอิง',XN:'ไม่มีสิทธิรับเงินคืนจากการลดทุน',XB:'ไม่ได้สิทธิในบางกรณี'};
 const PROMPT = `แปลงรูปปฏิทินหลักทรัพย์นี้เป็นข้อความ หนึ่งบรรทัดต่อหนึ่งวันต่อหนึ่งประเภท รูปแบบ: YYYY-MM-DD | ประเภท | ชื่อหุ้น คั่นด้วยคอมมา
 - วันที่ใช้ปี ค.ศ. (ปี พ.ศ. ลบ 543)
 - ประเภทใช้รหัสตามที่เห็นในภาพ เช่น XD, XM, XR, XN, XW, XT, XE, XB และ MEET (การจัดประชุมผู้ถือหุ้น)
@@ -163,19 +162,21 @@ $('#next').onclick = () => go(1);
 $('#tabs').onclick = e => { const b = e.target.closest('button'); if (b){ cur = b.dataset.m; draw(); } };
 
 function draw(){
-  const [y, m] = cur.split('-').map(Number), n = new Date(y, m, 0).getDate();
+  const [y, m] = cur.split('-').map(Number);
+  const first = new Date(y, m - 1, 1).getDay(), n = new Date(y, m, 0).getDate();
   $('#mtitle').textContent = MN[m-1] + ' ' + (y + 543);
   $('#tabs').innerHTML = months.length > 1 ? months.map(k => { const [yy, mm] = k.split('-').map(Number);
     return `<button data-m="${k}" class="${k === cur ? 'on' : ''}">${MN[mm-1]} ${yy + 543}</button>`; }).join('') : '';
-  const cnt = {}; let h = '';
+  let h = WD.map(w => `<div class="wd">${w}</div>`).join('') + '<div class="cell blank"></div>'.repeat(first);
+  const cnt = {};
   for (let d = 1; d <= n; d++){
-    const key = `${cur}-${pad(d)}`, day = by[key]; if (!day) continue;
+    const key = `${cur}-${pad(d)}`, dow = (first + d - 1) % 7, day = by[key] || {};
     const marks = [...ORDER.filter(k => day[k]), ...Object.keys(day).filter(k => !ORDER.includes(k))];
-    h += `<section class="day${key === todayKey ? ' today' : ''}${key < todayKey ? ' past' : ''}"><div class="dh"><span class="num">${d} ${MS[m-1]}</span><span class="wk">${WD[new Date(y, m-1, d).getDay()]}${key === todayKey ? '<span class="tag">วันนี้</span>' : ''}</span></div><div class="rows">` +
+    h += `<div class="cell${dow % 6 === 0 ? ' we' : ''}${key === todayKey ? ' today' : ''}${marks.length ? '' : ' noev'}"><div class="dh"><span class="dn">${WD[dow]}</span><span class="num">${d}</span></div>` +
       marks.map(k => { const list = day[k].slice().sort((a, b) => a.symbol.localeCompare(b.symbol)); cnt[k] = (cnt[k] || 0) + list.length;
-        return `<div class="grp g-${ORDER.includes(k) ? k : 'X'}"><b>${esc(LABEL[k] || k)}${MEAN[k] ? `<small>${MEAN[k]}</small>` : ''}</b><div class="chips">${list.map(r => `<span class="c" data-id="${r.id}" data-s="${esc(r.symbol)}" title="คลิก 2 ครั้งเพื่อลบ">${esc(r.symbol)}</span>`).join('')}</div></div>`; }).join('') + '</div></section>';
+        return `<div class="grp g-${ORDER.includes(k) ? k : 'X'}"><b>${esc(LABEL[k] || k)}</b><div class="chips">${list.map(r => `<span class="c" data-id="${r.id}" data-s="${esc(r.symbol)}" title="คลิก 2 ครั้งเพื่อลบ">${esc(r.symbol)}</span>`).join('')}</div></div>`; }).join('') + '</div>';
   }
-  $('#cal').innerHTML = h || '<p class="msg">ไม่มีรายการในเดือนนี้</p>';
+  $('#cal').innerHTML = h;
   const parts = ORDER.filter(k => cnt[k]).map(k => (LABEL[k] ? 'ประชุม' : k) + ' ' + cnt[k]);
   $('#stat').textContent = rows.length ? (parts.length ? 'เดือนนี้ ' + parts.join(', ') : 'ไม่มีข้อมูลในเดือนนี้') : 'ยังไม่มีข้อมูล กด "นำเข้าข้อมูล"';
 }
