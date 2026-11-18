@@ -1,7 +1,7 @@
 name: Calendar snapshot
 on:
   schedule:
-    - cron: "17 * * * *"   # ทุกชั่วโมง (นาทีที่ 17)
+    - cron: "*/10 * * * *"   # ทุก 10 นาที (บันทึกไฟล์เฉพาะเมื่อข้อมูลเปลี่ยน)
   workflow_dispatch:
 permissions:
   contents: write
